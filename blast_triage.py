@@ -49,6 +49,7 @@ def blast_wrapper(input_file, reference_database, contaminant_database, output_f
 			temp_query = "temp.fas"
 			temp_handle = open(temp_query, "w")
 			temp_handle.write(">%s\n%s\n" % (sequence_code, sequence))
+			temp_handle.close()
 
 			# Creating temporary storage variables
 			reference_results, contaminant_results = [], []
@@ -71,12 +72,12 @@ def blast_wrapper(input_file, reference_database, contaminant_database, output_f
 			#  hits on the contaminant database
 			try:
 				reference_ident = max([float(x[3]) for x in reference_results])
-			except IndexError:
+			except (IndexError, ValueError):
 				reference_ident = "None"
 
 			try:
 				contaminant_ident = max([float(x[3]) for x in contaminant_results])
-			except IndexError:
+			except (IndexError, ValueError):
 				contaminant_ident = "None"
 
 			if result is True:
@@ -144,11 +145,14 @@ def blast_worker(query_file, blast_database):
 	# output to stdout, which can be parsed within the script
 	blastx_cline = NcbiblastxCommandline(cmd="blastn", query=query_file,
 										db=blast_database, evalue=0.001, outfmt="'6 "
-										"qseqid sseqid evalue pident'", num_descriptions=1)
+										"qseqid sseqid evalue pident'",
+										out="temp.csv", num_descriptions=1)
 
-	stdout, sterr = blastx_cline()
+	blastx_cline()
 
 	# Parse BLAST output
+	temp_handle = open("temp.csv")
+	stdout = temp_handle.readline()
 	try:
 		vals = stdout.split()
 		query_name = vals[0]
