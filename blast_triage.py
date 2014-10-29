@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description="Application that removes sequences
 arg = parser.parse_args()
 
 
-def blast_wrapper(input_file, reference_database, contaminant_database):
+def blast_wrapper(input_file, reference_database, contaminant_database, output_file):
 	"""
 	:param input_file: String with the input file name
 	:param reference_database: List containing the path of the reference databases
@@ -23,6 +23,8 @@ def blast_wrapper(input_file, reference_database, contaminant_database):
 	"""
 
 	file_handle = open(input_file)
+	output_handle = open(output_file, "w")
+	log_handle = open(input_file + ".log", "w")
 
 	# Start iterating over input file
 	for line in file_handle:
@@ -51,6 +53,22 @@ def blast_wrapper(input_file, reference_database, contaminant_database):
 				if result is not None:
 					contaminant_results.append(result)
 
+			# Triage
+			result = triage(reference_results, contaminant_results)
+			if result is True:
+				output_handle.write(">%s\n%s\n" % (sequence_code, sequence))
+
+			else:
+				# The try statement accommodates the scenario where there are only blast
+				#  hits on the contaminant database
+				try:
+					reference_ident = max([float(x[3]) for x in reference_results])
+				except IndexError:
+					reference_ident = "None"
+
+				contaminant_ident = max([float(x[3]) for x in contaminant_results])
+				log_handle.write("%s; %s; %s\n" % (sequence_code, reference_ident, contaminant_ident))
+
 	file_handle.close()
 
 
@@ -64,6 +82,20 @@ def triage(reference_result, contaminant_result):
 	:return: Either True, if there is no contamination or False, if there is contamination
 	"""
 
+	# In case the query sequence has blast hits on the contaminant but not in the
+	# reference
+	if reference_result is [] and contaminant_result is not []:
+		return False
+
+	# In case the query sequence has not hits in neither database, the benefit of doubt
+	#  is given and the sequence is saved
+	if reference_result is [] and contaminant_result is []:
+		return True
+
+	# If there are only blast hits on the reference database
+	if reference_result is not [] and contaminant_result is []:
+		return True
+
 	#reference_evalues_max = max([float(x[2]) for x in reference_result])
 	reference_ident_max = max([float(x[3]) for x in reference_result])
 
@@ -71,11 +103,9 @@ def triage(reference_result, contaminant_result):
 	contaminant_ident_max = max([float(x[3]) for x in contaminant_result])
 
 	if reference_ident_max > contaminant_ident_max:
-
 		return True
 
 	else:
-
 		return False
 
 def blast_worker(query_file, blast_database):
