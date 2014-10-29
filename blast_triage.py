@@ -13,6 +13,7 @@ parser.add_argument("-r", dest="reference_database", nargs="*", help="Provide th
 					"path to the reference BLAST databases")
 parser.add_argument("-c", dest="contaminant_database", nargs="*", help="Provide the "
 					"path to the contaminant BLAST databases")
+parser.add_argument("-o", dest="output_file", help="Provide the name of the output file")
 
 arg = parser.parse_args()
 
@@ -155,6 +156,7 @@ def main():
 	input_file = arg.infie
 	reference_databases = arg.reference_database
 	contaminant_databases = arg.contaminant_database
+	output_file = arg.output_file
 
 	# Execution
-	blast_wrapper(input_file, reference_databases, contaminant_databases)
+	blast_wrapper(input_file, reference_databases, contaminant_databases, output_file)
