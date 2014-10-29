@@ -149,3 +149,12 @@ def blast_worker(query_file, blast_database):
 
 		return None
 
+
+def main():
+	# Arguments
+	input_file = arg.infie
+	reference_databases = arg.reference_database
+	contaminant_databases = arg.contaminant_database
+
+	# Execution
+	blast_wrapper(input_file, reference_databases, contaminant_databases)
