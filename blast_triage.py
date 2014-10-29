@@ -76,7 +76,11 @@ def blast_wrapper(input_file, reference_database, contaminant_database, output_f
 				contaminant_ident = max([float(x[3]) for x in contaminant_results])
 				log_handle.write("%s; %s; %s\n" % (sequence_code, reference_ident, contaminant_ident))
 
+			temp_handle.close()
+
 	file_handle.close()
+	output_handle.close()
+	log_handle.close()
 
 
 def triage(reference_result, contaminant_result):
