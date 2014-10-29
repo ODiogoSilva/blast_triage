@@ -7,6 +7,13 @@ parser = argparse.ArgumentParser(description="Application that removes sequences
 											"potentially contaminant sequences from a "
 											"file using BLAST on a custom set of genomes")
 
+parser.add_argument("-in", dest="infile", required=True, help="Provide the FastQ input "
+					"file")
+parser.add_argument("-r", dest="reference_database", nargs="*", help="Provide the "
+					"path to the reference BLAST databases")
+parser.add_argument("-c", dest="contaminant_database", nargs="*", help="Provide the "
+					"path to the contaminant BLAST databases")
+
 arg = parser.parse_args()
 
 
