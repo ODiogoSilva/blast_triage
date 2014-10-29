@@ -43,8 +43,6 @@ def blast_wrapper(input_file, reference_database, contaminant_database, output_f
 			sequence_code = line[1:].strip()
 			sequence = file_handle.next().strip()
 
-			print("\rProcessing sequence ID %s" % sequence_code)
-
 			# Creating temporary input file or blast
 			temp_query = "temp.fas"
 			temp_handle = open(temp_query, "w")
@@ -81,10 +79,14 @@ def blast_wrapper(input_file, reference_database, contaminant_database, output_f
 				contaminant_ident = "None"
 
 			if result is True:
+				print("\rProcessing sequence ID %s -> Winner is reference %s" %
+					(sequence_code, reference_ident))
 				output_handle.write(">%s\n%s\n" % (sequence_code, sequence))
 				log_handle.write("%s; %s; %s\n" % (sequence_code, reference_ident, contaminant_ident))
 
 			else:
+				print("\rProcessing sequence ID %s -> Winner is contaminant %s" %
+					(sequence_code, contaminant_ident))
 				log_handle.write("%s; %s; %s\n" % (sequence_code, reference_ident, contaminant_ident))
 
 			temp_handle.close()
