@@ -10,15 +10,15 @@ parser = argparse.ArgumentParser(description="Application that removes sequences
 arg = parser.parse_args()
 
 
-def blast_wrapper(input_file, database_list):
+def blast_wrapper(input_file, reference_database, contaminant_database):
 	"""
 	:param input_file: String with the input file name
-	:param database_list: List containing the name of the databases
+	:param reference_database: List containing the path of the reference databases
+	:param contaminant_database: List containing the path of the contaminant databases
 	Main function of the BLAST phase of the script. It iterates over a sequence file in
-	Fasta format and for each sequence it will BLAST it on the custom blast databases,
-	creating an individual file containing the best hit for each one. Then, it will
-	parse the BLAST output files and create an instance of the Triage class containing
-	the attributes of each best hit.
+	Fasta format and for each sequence it will BLAST it on the custom blast databases.
+	The results of the blasts for the different databases will be parsed and compared
+	to sort the sequences into contaminants or normal.
 	:return:
 	"""
 
@@ -37,9 +37,17 @@ def blast_wrapper(input_file, database_list):
 			temp_handle = open(temp_query, "w")
 			temp_handle.write(">%s\n%s\n" % (sequence_code, sequence))
 
+			# Creating temporary storage variables
+			reference_results, contaminant_results = [], []
+
 			# Executing BLAST for each specified database
-			for db in database_list:
+			for db in reference_database:
 				result = blast_worker(temp_query, db)
+				reference_results.append(result)
+
+			for db in contaminant_database:
+				result = blast_worker(temp_query, db)
+				contaminant_results.append(result)
 
 	file_handle.close()
 
