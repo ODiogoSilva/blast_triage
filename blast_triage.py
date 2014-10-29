@@ -157,7 +157,7 @@ def blast_worker(query_file, blast_database):
 
 def main():
 	# Arguments
-	input_file = arg.infie
+	input_file = arg.infile
 	reference_databases = arg.reference_database
 	contaminant_databases = arg.contaminant_database
 	output_file = arg.output_file
