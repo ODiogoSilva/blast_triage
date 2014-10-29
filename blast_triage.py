@@ -33,10 +33,13 @@ def blast_wrapper(input_file, database_list):
 			sequence = file_handle.next().strip()
 
 			# Creating temporary input file or blast
-			temp_handle = open("temp.fas", "w")
+			temp_query = "temp.fas"
+			temp_handle = open(temp_query, "w")
 			temp_handle.write(">%s\n%s\n" % (sequence_code, sequence))
 
 			# Executing BLAST for each specified database
+			for db in database_list:
+				result = blast_worker(temp_query, db)
 
 	file_handle.close()
 
