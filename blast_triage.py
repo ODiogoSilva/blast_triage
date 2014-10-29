@@ -135,8 +135,8 @@ def blast_worker(query_file, blast_database):
 	# Defining the blast command without specifying the output file name, redirects the
 	# output to stdout, which can be parsed within the script
 	blastx_cline = NcbiblastxCommandline(cmd="blastn", query=query_file,
-										db=blast_database, evalue=0.001, outfmt='6 qseqid'
-										' sseqid evalue pident', num_descriptions=1)
+										db=blast_database, evalue=0.001, outfmt="'6 "
+										"qseqid sseqid evalue pident'", num_descriptions=1)
 
 	stdout, sterr = blastx_cline()
 
