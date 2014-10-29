@@ -99,16 +99,16 @@ def triage(reference_result, contaminant_result):
 
 	# In case the query sequence has blast hits on the contaminant but not in the
 	# reference
-	if reference_result is [] and contaminant_result is not []:
+	if reference_result == [] and contaminant_result != []:
 		return False
 
 	# In case the query sequence has not hits in neither database, the benefit of doubt
 	#  is given and the sequence is saved
-	if reference_result is [] and contaminant_result is []:
+	if reference_result == [] and contaminant_result == []:
 		return True
 
 	# If there are only blast hits on the reference database
-	if reference_result is not [] and contaminant_result is []:
+	if reference_result != [] and contaminant_result == []:
 		return True
 
 	#reference_evalues_max = max([float(x[2]) for x in reference_result])
