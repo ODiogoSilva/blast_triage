@@ -1,11 +1,12 @@
 #!/usr/bin/python2
 
 import argparse
+import subprocess
 from Bio.Blast.Applications import NcbiblastxCommandline
 
 parser = argparse.ArgumentParser(description="Application that removes sequences "
-											"potentially contaminant sequences from a "
-											"file using BLAST on a custom set of genomes")
+					"potentially contaminant sequences from a "
+					"file using BLAST on a custom set of genomes")
 
 parser.add_argument("-in", dest="infile", required=True, help="Provide the FastQ input "
 					"file")
@@ -78,6 +79,8 @@ def blast_wrapper(input_file, reference_database, contaminant_database, output_f
 				log_handle.write("%s; %s; %s\n" % (sequence_code, reference_ident, contaminant_ident))
 
 			temp_handle.close()
+			# Removing temporary file
+			subprocess.Popen(["rm temp.fas"], shell=True).wait()
 
 	file_handle.close()
 	output_handle.close()
@@ -120,6 +123,7 @@ def triage(reference_result, contaminant_result):
 	else:
 		return False
 
+
 def blast_worker(query_file, blast_database):
 	"""
 	Executes biopython's BLAST on a custom database
@@ -160,3 +164,6 @@ def main():
 
 	# Execution
 	blast_wrapper(input_file, reference_databases, contaminant_databases, output_file)
+
+
+main()
