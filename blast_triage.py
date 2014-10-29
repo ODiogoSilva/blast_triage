@@ -39,3 +39,35 @@ def blast_wrapper(input_file, database_list):
 			# Executing BLAST for each specified database
 
 	file_handle.close()
+
+
+def blast_worker(query_file, blast_database):
+	"""
+	Executes biopython's BLAST on a custom database
+	:param query_file: String with the input file name
+	:param blast_database: String with database path
+	:return:
+	"""
+
+	# Defining the blast command without specifying the output file name, redirects the
+	# output to stdout, which can be parsed within the script
+	blastx_cline = NcbiblastxCommandline(cmd="blastn", query=query_file,
+										db=blast_database, evalue=0.001, outfmt='6 qseqid'
+										' sseqid evalue pident', num_descriptions=1)
+
+	stdout, sterr = blastx_cline()
+
+	# Parse BLAST output
+	try:
+		vals = stdout.split()
+		query_name = vals[0]
+		subject_name = vals[1]
+		evalue = vals[2]
+		ident = vals[3]
+
+		return query_name, subject_name, evalue, ident
+
+	except IndexError:
+
+		return None
+
