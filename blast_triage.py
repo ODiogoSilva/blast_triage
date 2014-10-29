@@ -43,6 +43,8 @@ def blast_wrapper(input_file, reference_database, contaminant_database, output_f
 			sequence_code = line[1:].strip()
 			sequence = file_handle.next().strip()
 
+			print("\rProcessing sequence ID %s" % sequence_code)
+
 			# Creating temporary input file or blast
 			temp_query = "temp.fas"
 			temp_handle = open(temp_query, "w")
@@ -64,18 +66,24 @@ def blast_wrapper(input_file, reference_database, contaminant_database, output_f
 
 			# Triage
 			result = triage(reference_results, contaminant_results)
+
+			# The try statement accommodates the scenario where there are only blast
+			#  hits on the contaminant database
+			try:
+				reference_ident = max([float(x[3]) for x in reference_results])
+			except IndexError:
+				reference_ident = "None"
+
+			try:
+				contaminant_ident = max([float(x[3]) for x in contaminant_results])
+			except IndexError:
+				contaminant_ident = "None"
+
 			if result is True:
 				output_handle.write(">%s\n%s\n" % (sequence_code, sequence))
+				log_handle.write("%s; %s; %s\n" % (sequence_code, reference_ident, contaminant_ident))
 
 			else:
-				# The try statement accommodates the scenario where there are only blast
-				#  hits on the contaminant database
-				try:
-					reference_ident = max([float(x[3]) for x in reference_results])
-				except IndexError:
-					reference_ident = "None"
-
-				contaminant_ident = max([float(x[3]) for x in contaminant_results])
 				log_handle.write("%s; %s; %s\n" % (sequence_code, reference_ident, contaminant_ident))
 
 			temp_handle.close()
