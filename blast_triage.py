@@ -35,9 +35,23 @@ def blast_wrapper(input_file, reference_database,
     :return:
     """
 
+    def count_lines(infile):
+
+        infile_handle = open(infile)
+        x = 1
+
+        for i in infile_handle:
+            if i.startswith(">") or i.startswith("@"):
+                x += 1
+
+        return x
+
+
     file_handle = open(input_file)
     output_handle = open(output_file, "w")
     log_handle = open(input_file + ".log", "w")
+
+    #line_size = count_lines(input_file)
 
     # Start iterating over input file
     for line in file_handle:
