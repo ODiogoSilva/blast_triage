@@ -46,7 +46,6 @@ def blast_wrapper(input_file, reference_database,
 
         return x
 
-
     file_handle = open(input_file)
     output_handle = open(output_file, "w")
     log_handle = open(input_file + ".log", "w")
@@ -98,16 +97,16 @@ def blast_wrapper(input_file, reference_database,
                 contaminant_ident = "None"
 
             if result is True:
-                print("\rProcessing sequence ID %s -> Winner is reference %s" %
-                    (sequence_code, reference_ident))
+                print("Processing sequence ID %s -> Winner is reference %s" %
+                    (sequence_code, reference_ident)),
                 output_handle.write(">%s\n%s\n" % (sequence_code, sequence))
                 log_handle.write("%s; %s; %s\n" % (sequence_code,
                                                    reference_ident,
                                                    contaminant_ident))
 
             else:
-                print("\rProcessing sequence ID %s -> Winner is contaminant %s"
-                      % (sequence_code, contaminant_ident))
+                print("Processing sequence ID %s -> Winner is contaminant %s"
+                      % (sequence_code, contaminant_ident)),
                 log_handle.write("%s; %s; %s\n" % (sequence_code,
                                                    reference_ident,
                                                    contaminant_ident))
